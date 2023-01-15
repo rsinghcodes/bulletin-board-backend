@@ -1,9 +1,10 @@
 import { GraphQLError } from 'graphql';
 import bcrypt from 'bcryptjs';
-import Joi from 'joi';
 
-import UserType from './user.interface';
-import User from '../../../models/User';
+import UserType from '../../interface/user';
+import User from '../../models/User';
+import { validateCreateUser } from '../../utils/validators';
+import generateToken from '../../middleware/generateToken';
 
 export default {
   Query: {
@@ -38,33 +39,22 @@ export default {
     createUser: async (
       _: null,
       {
-        userInput: { fullname, email, password, confirmPassword },
+        userInput: { fullname, email, password, repeat_password },
       }: { userInput: UserType }
     ) => {
       try {
-        const schema = Joi.object({
-          fullname: Joi.string().min(2),
-          password: Joi.string().pattern(new RegExp('^[a-zA-Z0-9]{3,30}$')),
-          confirmPassword: Joi.ref('password'),
-          email: Joi.string().email({
-            minDomainSegments: 2,
-            tlds: { allow: ['com', 'net'] },
-          }),
-        }).with('password', 'confirmPassword');
+        const { isValid, errors } = validateCreateUser({
+          fullname,
+          email,
+          password,
+          repeat_password,
+        });
 
-        const { error } = schema.validate(
-          {
-            fullname,
-            email,
-            password,
-            confirmPassword,
-          },
-          { presence: 'required' }
-        );
+        console.log(isValid);
 
-        if (error) {
+        if (!isValid) {
           throw new GraphQLError('Errors', {
-            extensions: { code: 'BAD_USER_INPUT', error },
+            extensions: { code: 'BAD_USER_INPUT', errors },
           });
         }
         // Make sure user doesn't already exist
@@ -91,14 +81,16 @@ export default {
 
         const res = await newUser.save();
 
-        // const token = generateToken(res);
+        const token = generateToken(res);
 
         return {
           ...res,
           id: res._id,
-          // token,
+          token,
         };
-      } catch (error) {}
+      } catch (error) {
+        throw error;
+      }
     },
   },
 };

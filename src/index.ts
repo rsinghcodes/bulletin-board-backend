@@ -1,12 +1,10 @@
 import { ApolloServer } from '@apollo/server';
 import { startStandaloneServer } from '@apollo/server/standalone';
 import mongoose from 'mongoose';
-import dotenv from 'dotenv';
 
+import { MONGODB } from './config';
 import typeDefs from './graphql/typeDefs.js';
 import resolvers from './graphql/resolvers/index.js';
-
-dotenv.config();
 
 const server = new ApolloServer({
   typeDefs,
@@ -14,7 +12,7 @@ const server = new ApolloServer({
 });
 
 mongoose
-  .connect(`${process.env.MONGODB}`)
+  .connect(`${MONGODB}`)
   .then(async () => {
     const { url } = await startStandaloneServer(server, {
       listen: { port: 4000 },

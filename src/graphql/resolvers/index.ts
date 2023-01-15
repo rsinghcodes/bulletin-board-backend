@@ -1,4 +1,4 @@
-import userResolver from './user/user';
+import userResolver from './user';
 import noteResolver from './note';
 
 export default {

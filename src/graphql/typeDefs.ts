@@ -2,7 +2,7 @@ const typeDefs = `#graphql
     type User {
         id: ID!
         email: String!
-        # token: String!
+        token: String!
         fullname: String!
         createdAt: String!
     }
@@ -29,7 +29,7 @@ const typeDefs = `#graphql
     input UserInput {
         fullname: String!
         password: String!
-        confirmPassword: String!
+        repeat_password: String!
         email: String!
     }
     type Query {
