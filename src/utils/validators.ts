@@ -1,7 +1,11 @@
 import Validator from 'validator';
 import isEmpty from 'is-empty';
 
-import UserType from '../interface/user';
+import { UserType, LoginUserType } from '../interface/user';
+
+interface ErrorsTypes {
+  [key: string]: string;
+}
 
 export const validateCreateUser = ({
   fullname,
@@ -9,12 +13,7 @@ export const validateCreateUser = ({
   password,
   repeat_password,
 }: UserType) => {
-  const errors: UserType = {
-    email: '',
-    fullname: '',
-    password: '',
-    repeat_password: '',
-  };
+  const errors: ErrorsTypes = {};
 
   fullname = !isEmpty(fullname) ? fullname : '';
   email = !isEmpty(email) ? email : '';
@@ -40,6 +39,27 @@ export const validateCreateUser = ({
   }
   if (!Validator.equals(password, repeat_password)) {
     errors.repeat_password = 'Passwords must match';
+  }
+
+  return {
+    errors,
+    isValid: isEmpty(errors),
+  };
+};
+
+export const validateLoginInput = ({ email, password }: LoginUserType) => {
+  const errors: ErrorsTypes = {};
+
+  email = !isEmpty(email) ? email : '';
+  password = !isEmpty(password) ? password : '';
+
+  if (Validator.isEmpty(email)) {
+    errors.email = 'Email field is required';
+  } else if (!Validator.isEmail(email)) {
+    errors.email = 'Please choose valid Email format!';
+  }
+  if (Validator.isEmpty(password)) {
+    errors.password = 'Password field is required';
   }
 
   return {

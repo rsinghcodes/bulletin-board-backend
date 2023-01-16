@@ -1,16 +1,11 @@
 import jwt from 'jsonwebtoken';
 import { SECRET_KEY } from '../config';
+import { UserDoc } from '../models/User';
 
-type User = {
-  id?: number;
-  email?: string;
-  fullname?: string;
-};
-
-const generateToken = (user: User) => {
+const generateToken = (user: UserDoc) => {
   return jwt.sign(
     {
-      id: user.id,
+      id: user._id,
       email: user.email,
       fullname: user.fullname,
     },

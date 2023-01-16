@@ -1,9 +1,9 @@
 import { GraphQLError } from 'graphql';
 import bcrypt from 'bcryptjs';
 
-import UserType from '../../interface/user';
+import { UserType, LoginUserType } from '../../interface/user';
 import User from '../../models/User';
-import { validateCreateUser } from '../../utils/validators';
+import { validateCreateUser, validateLoginInput } from '../../utils/validators';
 import generateToken from '../../middleware/generateToken';
 
 export default {
@@ -50,8 +50,6 @@ export default {
           repeat_password,
         });
 
-        console.log(isValid);
-
         if (!isValid) {
           throw new GraphQLError('Errors', {
             extensions: { code: 'BAD_USER_INPUT', errors },
@@ -84,12 +82,60 @@ export default {
         const token = generateToken(res);
 
         return {
-          ...res,
+          ...res.toJSON(),
           id: res._id,
           token,
         };
-      } catch (error) {
-        throw error;
+      } catch (errors) {
+        throw errors;
+      }
+    },
+    loginUser: async (_: null, { email, password }: LoginUserType) => {
+      try {
+        const { errors, isValid } = validateLoginInput({ email, password });
+
+        if (!isValid) {
+          throw new GraphQLError('Errors', {
+            extensions: {
+              code: 'BAD_USER_INPUT',
+              errors,
+            },
+          });
+        }
+
+        const user = await User.findOne({ email });
+
+        if (!user) {
+          errors.email = 'Email not found!';
+          throw new GraphQLError('Email not found!', {
+            extensions: {
+              code: 'BAD_USER_INPUT',
+              errors,
+            },
+          });
+        }
+
+        const match = bcrypt.compare(password, user.password);
+
+        if (!match) {
+          errors.password = 'Password is invalid!';
+          throw new GraphQLError('Password is invalid!', {
+            extensions: {
+              code: 'BAD_USER_INPUT',
+              errors,
+            },
+          });
+        }
+
+        const token = generateToken(user);
+
+        return {
+          ...user.toJSON(),
+          id: user._id,
+          token,
+        };
+      } catch (errors) {
+        throw errors;
       }
     },
   },

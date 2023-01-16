@@ -39,6 +39,7 @@ const typeDefs = `#graphql
     }
     type Mutation {
         createUser(userInput: UserInput): User!
+        loginUser(email: String!, password: String!): User!
         createNote(noteInput: NoteContent): [Note]
     }
     `;
