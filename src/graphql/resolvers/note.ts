@@ -7,17 +7,22 @@ import verifyAuth from '../../middleware/verifyAuth';
 
 export default {
   Query: {
-    getNotes: async (_: null) => {
+    getNotesByUserId: async (_: null, {}, context: any) => {
       try {
-        const notes = await Note.find();
-        return notes;
-      } catch (error) {
-        throw new GraphQLError('No notes available!', {
-          extensions: {
-            code: 'NOT_FOUND',
-            error,
-          },
-        });
+        const user = verifyAuth(context);
+        const notes = await Note.find({ userId: user.id });
+
+        if (notes) {
+          return notes;
+        } else {
+          throw new GraphQLError('No notes available!', {
+            extensions: {
+              code: 'NOT_FOUND',
+            },
+          });
+        }
+      } catch (errors) {
+        throw errors;
       }
     },
   },

@@ -12,12 +12,13 @@ const server = new ApolloServer({
 });
 
 mongoose
+  .set('strictQuery', false)
   .connect(`${MONGODB}`)
   .then(async () => {
     const { url } = await startStandaloneServer(server, {
       context: async ({ req }) => ({ req }),
       listen: { port: 4000 },
     });
-    console.log(`🚀  Server ready at: ${url}`);
+    console.log(`🚀 Server ready at: ${url}`);
   })
   .catch((error: any) => console.error(error));

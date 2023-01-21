@@ -35,7 +35,7 @@ const typeDefs = `#graphql
     type Query {
         getUser(userId: ID!): User
         getUsers: [User]
-        getNotes: [Note]
+        getNotesByUserId: [Note]
     }
     type Mutation {
         createUser(userInput: UserInput): User!
