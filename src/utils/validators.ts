@@ -67,3 +67,18 @@ export const validateLoginInput = ({ email, password }: LoginUserType) => {
     isValid: isEmpty(errors),
   };
 };
+
+export const validateNoteContent = ({ content }: { content: string }) => {
+  const errors: ErrorsTypes = {};
+
+  content = !isEmpty(content) ? content : '';
+
+  if (Validator.isEmpty(content)) {
+    errors.content = 'Content is required';
+  }
+
+  return {
+    errors,
+    isValid: isEmpty(errors),
+  };
+};

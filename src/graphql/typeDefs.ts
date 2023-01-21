@@ -7,24 +7,24 @@ const typeDefs = `#graphql
         createdAt: String!
     }
     type DefaultPos {
-        x: String!
-        y: String!
-    }
-    input DefaultPos {
-        x: String!
-        y: String!
+        x: Int!
+        y: Int!
     }
     type Note {
         id: ID!
         content: String!
         createdAt: String!
         color: String!
-        # defaultPos: DefaultPos!
+        defaultPos: DefaultPos!
     }
-    input NoteContent {
+    input DefaultPosition {
+        x: Int!
+        y: Int!
+    }
+    input NoteInput {
         content: String!
         color: String!
-        # defaultPos: DefaultPos!
+        defaultPos: DefaultPosition!
     }
     input UserInput {
         fullname: String!
@@ -40,7 +40,8 @@ const typeDefs = `#graphql
     type Mutation {
         createUser(userInput: UserInput): User!
         loginUser(email: String!, password: String!): User!
-        createNote(noteInput: NoteContent): [Note]
+        createNote(noteInput: NoteInput): Note
+        deleteNote(contentId: ID!): String!
     }
     `;
 

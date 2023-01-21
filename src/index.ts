@@ -15,6 +15,7 @@ mongoose
   .connect(`${MONGODB}`)
   .then(async () => {
     const { url } = await startStandaloneServer(server, {
+      context: async ({ req }) => ({ req }),
       listen: { port: 4000 },
     });
     console.log(`🚀  Server ready at: ${url}`);

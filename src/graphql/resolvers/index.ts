@@ -8,5 +8,6 @@ export default {
   },
   Mutation: {
     ...userResolver.Mutation,
+    ...noteResolver.Mutation,
   },
 };
