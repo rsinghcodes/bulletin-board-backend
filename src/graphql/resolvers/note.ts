@@ -94,5 +94,34 @@ export default {
         throw errors;
       }
     },
+    updateBoardPosition: async (
+      _: null,
+      {
+        contentId,
+        defaultPos,
+      }: { contentId: string; defaultPos: { x: string; y: string } },
+      context: any
+    ) => {
+      try {
+        const user = verifyAuth(context);
+        const note: NoteDoc | null = await Note.findById(contentId);
+
+        if (user.id == note?.userId) {
+          const updatedNote = await Note.findByIdAndUpdate(
+            contentId,
+            { defaultPos },
+            { new: true }
+          );
+
+          return updatedNote;
+        } else {
+          throw new GraphQLError('Action not allowed', {
+            extensions: { code: 'AUTHENTICATION_ERROR' },
+          });
+        }
+      } catch (errors) {
+        throw errors;
+      }
+    },
   },
 };

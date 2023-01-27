@@ -42,6 +42,7 @@ const typeDefs = `#graphql
         loginUser(email: String!, password: String!): User!
         createNote(noteInput: NoteInput): Note
         deleteNote(contentId: ID!): Note
+        updateBoardPosition(contentId: ID! defaultPos: DefaultPosition!): Note
     }
     `;
 
