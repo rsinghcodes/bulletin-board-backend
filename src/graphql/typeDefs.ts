@@ -41,7 +41,7 @@ const typeDefs = `#graphql
         createUser(userInput: UserInput): User!
         loginUser(email: String!, password: String!): User!
         createNote(noteInput: NoteInput): Note
-        deleteNote(contentId: ID!): String!
+        deleteNote(contentId: ID!): Note
     }
     `;
 

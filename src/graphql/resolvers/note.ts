@@ -80,13 +80,15 @@ export default {
         const user = verifyAuth(context);
         const note: NoteDoc | null = await Note.findById(contentId);
 
-        if (user.id == note?.userId) {
-          await note?.delete();
-          return 'Board deleted successfully';
-        } else {
-          throw new GraphQLError('Action not allowed', {
-            extensions: { code: 'AUTHENTICATION_ERROR' },
-          });
+        if (note) {
+          if (user.id == note?.userId) {
+            const deletedNotes = await note?.delete();
+            return deletedNotes;
+          } else {
+            throw new GraphQLError('Action not allowed', {
+              extensions: { code: 'AUTHENTICATION_ERROR' },
+            });
+          }
         }
       } catch (errors) {
         throw errors;
