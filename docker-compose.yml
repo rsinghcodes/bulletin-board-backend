@@ -1,0 +1,12 @@
+version: '3.9'
+
+services:
+  app:
+    container_name: bulletin-board-backend
+    image: bulletin-board-backend
+    build: ./
+    ports: 
+      - 4000:4000
+    environment:
+      MONGODB: $MONGODB
+      SECRET_KEY: $SECRET_KEY
